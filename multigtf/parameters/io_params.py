@@ -126,8 +126,8 @@ class IOParams:
 
     @nlog.setter
     def nlog(self, value):
-        if not isinstance(value, int):
-            raise TypeError("nlog must be an integer")
+        if not isinstance(value, int) or value < 1:
+            raise TypeError("nlog must be a positive integer")
         self._nlog = value
 
     @property
@@ -136,8 +136,8 @@ class IOParams:
 
     @nupdate.setter
     def nupdate(self, value):
-        if not isinstance(value, int):
-            raise TypeError("nupdate must be an integer")
+        if not isinstance(value, int) or value < 1:
+            raise TypeError("nupdate must be a positive integer")
         self._nupdate = value
 
     @property

@@ -67,7 +67,7 @@ class SimParams:
         self.b = b
         self.evap = evap
         self.binaries = binaries
-        self._n_particle = int(n_particle)
+        self.n_particle = n_particle
         if bkg is not None:
             self.bkg = bkg
 

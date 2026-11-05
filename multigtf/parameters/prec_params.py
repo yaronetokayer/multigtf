@@ -47,7 +47,7 @@ class PrecisionParams:
 
     @max_iter_du.setter
     def max_iter_du(self, value):
-        self._validate_nonnegative_int(value, "max_iter_du")
+        self._validate_positive_int(value, "max_iter_du")
         self._max_iter_du = int(value)
 
     @property
@@ -72,9 +72,9 @@ class PrecisionParams:
         if not (value > 0):
             raise ValueError(f"{name} must be a positive float.")
 
-    def _validate_nonnegative_int(self, value, name):
-        if not (isinstance(value, int) and value >= 0):
-            raise ValueError(f"{name} must be a non-negative integer.")
+    def _validate_positive_int(self, value, name):
+        if not (isinstance(value, int) and value > 0):
+            raise ValueError(f"{name} must be a positive integer.")
 
     def __repr__(self):
         attrs = [

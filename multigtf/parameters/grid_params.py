@@ -9,7 +9,7 @@ class GridParams:
     rmax : float
         Maximum radius of the grid, in units of the scale radius (r / r_s).
     ngrid : int
-        Number of radial shells (must be > 1). Each species has ngrid+1
+        Number of radial shells (must be > 2). Each species has ngrid+1
         edges, including the origin, and ngrid shell-centered values.
     """
 
@@ -53,8 +53,8 @@ class GridParams:
 
     @ngrid.setter
     def ngrid(self, value):
-        if not isinstance(value, int) or value <= 1:
-            raise ValueError("ngrid must be an integer greater than 1")
+        if not isinstance(value, int) or value < 3:
+            raise ValueError("ngrid must be an integer greater than 2")
         self._ngrid = value
 
     def __repr__(self):
