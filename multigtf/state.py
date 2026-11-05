@@ -357,6 +357,7 @@ class State:
 
         # Profile-specific parameters
         if prof == 'hernq_decay': # Blank
+            raise NotImplementedError("The decaying Hernquist background is not implemented.")
             bkg_param[3] = bkg['other']
 
         #--- Readjust lnL and t0

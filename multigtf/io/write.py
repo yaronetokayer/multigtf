@@ -23,7 +23,9 @@ def make_dir(state):
             print(f"Created directory: {full_path}")
     else:
         if state.config.io.chatter:
+            import warnings
             print(f"Directory already exists: {full_path}")
+            warnings.warn("Overwrite protection is not currently implemented", UserWarning, stacklevel=2)
 
 def write_metadata(state):
     """

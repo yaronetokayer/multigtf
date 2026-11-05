@@ -35,7 +35,9 @@ def run_until_stop(state, start_step, **kwargs):
     char    = state.char
 
     # Switches
-    # evap = sim.evap
+    evap = sim.evap
+    if evap:
+        raise NotImplementedError('Evaporation is not currently implemented')
     binaries = sim.binaries; n_particle = sim.n_particle
 
     # Parameters
