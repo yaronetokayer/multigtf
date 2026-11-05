@@ -602,9 +602,6 @@ def calc_r50_spread(r, m, r50evo):
     """
     s, _ = r.shape
 
-    if s < 2:
-        return 0.0
-
     frac = np.array([0.5])
 
     r50_min = 1.0e308
@@ -621,6 +618,9 @@ def calc_r50_spread(r, m, r50evo):
             r50_max = r_50_k
 
         r50evo[k,1]    = r_50_k/r50evo[k,0]
+
+    if s < 2:
+        return 0.0
         
     r50_mean = r50_sum / s
 

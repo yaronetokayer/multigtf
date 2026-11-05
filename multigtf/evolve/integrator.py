@@ -309,6 +309,7 @@ def integrate_time_step(state, dt_prop, step_count,                 # State
 
     # Diagnostics
     state.n_iter_du     += iter_du
+    state.n_steps_log   += 1
     state.dt_cum        += float(dt_prop)
     state.du_max_cum    += float(du_max)
 

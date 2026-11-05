@@ -156,9 +156,7 @@ def write_log_entry(state, start_step):
     filepath = os.path.join(io.base_dir, io.model_dir, f"logfile.txt")
     chatter = io.chatter
     step = state.step_count
-    nlog = io.nlog
-    if ( step - start_step ) % nlog != 0:
-        nlog = ( step - start_step ) % nlog
+    n_steps = state.n_steps_log
 
     # Build header (base columns up to <du lim>)
     header_cols = [
@@ -174,7 +172,7 @@ def write_log_entry(state, start_step):
     header = "  ".join(header_cols) + "\n"
 
     # Build data row
-    if step == start_step:
+    if n_steps == 0:
         # On the first step, some averaged/limiting quantities are N/A.
         row = [
             f"{step:10d}",
@@ -191,11 +189,11 @@ def write_log_entry(state, start_step):
         row = [
             f"{step:10d}",
             f"{state.t:12.6e}",
-            f"{state.dt_cum / nlog:12.6e}",
+            f"{state.dt_cum / n_steps:12.6e}",
             f"{state.rho0:12.6e}",
             f"{state.r50_spread:10.4e}",
-            f"{state.du_max_cum / prec.eps_du / nlog:8.2e}",
-            f"{state.n_iter_du / nlog:11.5e}"
+            f"{state.du_max_cum / prec.eps_du / n_steps:8.2e}",
+            f"{state.n_iter_du / n_steps:11.5e}"
         ]
 
     new_line = "  ".join(row) + "\n"
@@ -205,6 +203,7 @@ def write_log_entry(state, start_step):
     state.n_iter_du = 0
     state.dt_cum = 0.0
     state.du_max_cum = 0.0
+    state.n_steps_log = 0
 
     if chatter:
         if step == 0:

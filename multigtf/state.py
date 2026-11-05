@@ -597,7 +597,8 @@ class State:
         self.r50_spread = calc_r50_spread(self.r, self.m, self.r50evo)
 
         # For diagnostics
-        self.n_iter_du = 0
+        self.n_iter_du      = 0
+        self.n_steps_log    = 0
 
         self.dt_cum     = 0.0
         self.du_max_cum = 0.0
