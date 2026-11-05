@@ -158,8 +158,7 @@ class State:
         resumes an evolved simulation.
         """
         raise NotImplementedError(
-            'State.from_dir is not implemented. Use the readers in '
-            'multigtf.io.read to inspect saved output.'
+            'State.from_dir is not implemented.'
         )
 
     def _set_species_hierarchy(self):
