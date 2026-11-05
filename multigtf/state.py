@@ -74,8 +74,28 @@ class State:
         self._set_species_hierarchy()
         self.char = self._set_param()
 
-        # Check for truncated NFW profile - numerically integrate potential
-        first = True
+        # Check for truncated NFW or King profiles - numerically integrate potential
+        has_tnfw = False
+        has_king = False
+        for name in self.labels:
+            if self.config.spec[name].init.prof == 'truncated_nfw':
+                has_tnfw = True
+            if self.config.spec[name].init.prof == 'king':
+                has_king = True
+        if has_tnfw or has_king:
+            import warnings
+            warnings.warn("Compatible cutoff radii for King and truncated NFW profiles have not been thoroughly tested.", UserWarning, stacklevel=2,)
+            
+            self.rcut = {}
+            self.pot_rad = {}
+            self.pot = {}
+            if has_tnfw:
+                self.rho_interp = {}
+                self.pot_interp = {}
+            if has_king:
+                self.nu_interp = {}
+                self.w_interp = {}
+        
         for name in self.labels:
             if self.config.spec[name].init.prof == 'truncated_nfw':
                 print(f"Computing truncated NFW potential for species {name}:")
@@ -83,26 +103,21 @@ class State:
                 prec = config.prec
                 chatter = config.io.chatter
                 init = config.spec[name].init
-                if first:
-                    self.rho_interp, self.rcut, self.pot_interp, self.pot_rad, self.pot = ({} for _ in range(5))
                 self.rho_interp[name] = generate_rho_lookup(init, prec, chatter)
                 self.rcut[name], config.grid.rmax, self.pot_interp[name], self.pot_rad[name], self.pot[name] = integrate_potential(
                     init, config.grid, chatter, self.rho_interp[name]
-                    )
-                first = False
+                )
+
             if self.config.spec[name].init.prof == 'king':
                 print(f"Computing King potential for species {name}:")
                 from multigtf.profiles.king import generate_nu_lookup, integrate_W_king
                 prec = config.prec
                 chatter = config.io.chatter
                 init = config.spec[name].init
-                if first:
-                    self.nu_interp, self.rcut, self.w_interp, self.pot_rad, self.pot = ({} for _ in range(5))
                 self.nu_interp[name] = generate_nu_lookup(init, prec, chatter)
                 self.rcut[name], config.grid.rmax, self.w_interp[name], self.pot_rad[name], self.pot[name] = integrate_W_king(
                     init, config.grid, chatter, self.nu_interp[name]
-                    )
-                first = False
+                )
 
     @classmethod
     def from_config(cls, config):
@@ -472,16 +487,6 @@ class State:
         # Rho, u, and p from equation of state
         rho = 3.0 * ( m[:, 1:] - m[:, :-1] ) / dr3
         p = rho * v2
-
-        # Central smoothing for NFW profile
-        for i, name in enumerate(labels):
-            if spec[name].init.prof == 'nfw':
-                r1 = r[i, 1]
-                rho0_ideal = 1.0 / (r1 * (1.0 + r1)**2)
-                rho[i, 0] = 2.0 * rho0_ideal - rho[i, 1]
-                dr_ratio = (r[i, 2] - r[i, 0]) / (r[i, 3] - r[i, 1])
-                p[i, 0] = p[i, 1] - dr_ratio * (p[i, 2] - p[i, 1])
-                v2[i, 0] = p[i, 0] / rho[i, 0]
 
         # Recompute pressure of central bin such that HE is guaranteed
         srho0 = rho[:, 1] + rho[:, 0]
